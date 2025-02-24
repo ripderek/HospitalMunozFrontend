@@ -1,40 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import { useRef } from "react";
 import html2canvas from "html2canvas";
 import { PrinterIcon } from "@heroicons/react/24/solid";
-import { useApiContext } from "../../context/ApiContext";
-import Loader from "../../components/Layout/Loader";
 
-export default function ImprimirTurno({ turnoID, cerrar }) {
-  const { apiUrl } = useApiContext();
-  const [load, setLoader] = useState(false);
+export default function ImprimirHonorario({ informacionHonorario, cerrar }) {
   const printRef = useRef(null);
-  const FechaActual = new Date();
-  //Objeto con la informacion para registrar del cupo
-  const [Cupo, SetCupo] = useState([]);
-
-  useEffect(() => {
-    ObtenerInfo();
-  }, [turnoID]);
-
-  const ObtenerInfo = async () => {
-    setLoader(true);
-    try {
-      const response = await fetch(apiUrl + "turno/verTurno/" + turnoID, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      const data = await response.json();
-      SetCupo(data);
-      //console.log(data);
-      setLoader(false);
-    } catch (error) {
-      console.log(`Error: ${error}`);
-      alert("Error en la peticion ObtenerInfo:imprimir turno");
-      setLoader(false);
-    }
-  };
-
   /*
   const handleDownloadPdf = async () => {
     const element = printRef.current;
@@ -127,7 +96,6 @@ export default function ImprimirTurno({ turnoID, cerrar }) {
       <div className="w-max">
         <div className="bg-white dark:bg-gray-950 p-3  rounded-3xl animate-fade-in">
           <div className=" h-full w-full">
-            {load && <Loader />}
             <div className="flex flex-col">
               <button
                 className="p-3 bg-blue-600 rounded-3xl font-semibold text-white self-end"
@@ -144,34 +112,42 @@ export default function ImprimirTurno({ turnoID, cerrar }) {
               >
                 <div className="text-center mt-4">Logo</div>
                 <div className="mt-6">
-                  <span className="font-bold">Fecha:</span>
-                  {Cupo.fechar ? Cupo.fechar : ""}
-                  <span className="font-bold ml-3">Hora:</span>{" "}
-                  {Cupo.hora_minutosr ? Cupo.hora_minutosr : ""}
+                  <span className="font-bold">FECHA:</span>
+                  {informacionHonorario.fecha ? informacionHonorario.fecha : ""}
+                  <span className="font-bold ml-3">HORA:</span>{" "}
+                  {informacionHonorario.hora ? informacionHonorario.hora : ""}
                 </div>
-                <div className="text-center ">
-                  <h1 className="text-2xl">TURNO</h1>
-                  <h1 className="text-3xl font-bold mt-2 ">
-                    {Cupo.departamentor ? Cupo.departamentor : "DEPARTAMENTO"}
-                  </h1>
-                </div>
-                <div className="mt-6 flex flex-col">
-                  <p className="text-center text-lg">
-                    {Cupo.pacienter ? Cupo.pacienter : "PACIENTE"}
-                  </p>
-                  <div className="flex flex-row  gap-3 justify-center">
-                    <p className="text-center text-lg font-bold">
-                      {" "}
-                      {Cupo.valorr ? `$${Cupo.valorr}` : "$ Valor"}
-                    </p>
-                    <p className="text-center text-lg">
-                      {" "}
-                      {Cupo.metodopagor ? Cupo.metodopagor : "Tipo pago"}
-                    </p>
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <span className="font-bold">NOMBRE: </span>
+                    {informacionHonorario.nombre
+                      ? informacionHonorario.nombre
+                      : ""}
                   </div>
-                  <span className="self-end mt-2">
-                    {Cupo.identificadorr ? Cupo.identificadorr : ""}
-                  </span>
+                  <div>
+                    <span className="font-bold">MOTIVO: </span>
+                    {informacionHonorario.motivo
+                      ? informacionHonorario.motivo
+                      : ""}
+                  </div>
+                  <div>
+                    <span className="font-bold">VALOR : </span>
+                    {informacionHonorario.valor
+                      ? `$${informacionHonorario.valor}`
+                      : ""}
+                  </div>
+                  <div>
+                    <span className="font-bold">NUMERO DE CUENTA : </span>
+                    {informacionHonorario.numerocuenta
+                      ? informacionHonorario.numerocuenta
+                      : ""}
+                  </div>
+                  <div>
+                    <span className="font-bold">BANCO : </span>
+                    {informacionHonorario.banco
+                      ? informacionHonorario.banco
+                      : ""}
+                  </div>
                 </div>
               </div>
             </div>
@@ -180,7 +156,7 @@ export default function ImprimirTurno({ turnoID, cerrar }) {
               onClick={handlePrint}
             >
               <PrinterIcon className="h-10 w-10 text-white  p-2" />
-              Imprimir turno
+              Imprimir honorario
             </button>
           </div>
         </div>

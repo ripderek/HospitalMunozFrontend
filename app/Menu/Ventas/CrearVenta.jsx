@@ -2,7 +2,7 @@ import { useState } from "react";
 import ListaMedicinas from "./ListaMedicinas";
 import Factura from "./Factura";
 
-export default function CrearVenta({ actualizarLista }) {
+export default function CrearVenta({ actualizarLista, ObtenerIDVenta }) {
   const [Lista, SetLista] = useState([]);
   const RetornarRow = (row) => {
     SetLista((prevLista) => {
@@ -69,6 +69,7 @@ export default function CrearVenta({ actualizarLista }) {
               ModificarCantidad={ModificarCantidad}
               Limpiar={Limpiar}
               actualizarLista={actualizarLista}
+              ObtenerIDVenta={ObtenerIDVenta}
             />
           </div>
         </div>

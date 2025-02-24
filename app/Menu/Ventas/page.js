@@ -5,13 +5,17 @@ const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import CrearVenta from "./CrearVenta";
 import ListaVentas from "./ListaVentas";
 import { useState } from "react";
+import FacturaVisor from "./FacturaVisor";
 
 export default function Ventas() {
   const [reload, setReload] = useState(false);
-
   // Función para forzar la actualización de ListarTurnos
   const actualizarLista = () => {
     setReload((prev) => !prev);
+  };
+  const [IDVentaVer, SetIdVentaVer] = useState(0);
+  const ObtenerIDVenta = (id) => {
+    SetIdVentaVer(id);
   };
   return (
     <>
@@ -41,8 +45,14 @@ export default function Ventas() {
         </div>
       </div>
       {/* COMPONENTE CREAR TURNO  */}
-      <CrearVenta actualizarLista={actualizarLista} />
-      <ListaVentas reload={reload} />
+      {IDVentaVer !== 0 && (
+        <FacturaVisor ventaid={IDVentaVer} cerrar={() => ObtenerIDVenta(0)} />
+      )}
+      <CrearVenta
+        actualizarLista={actualizarLista}
+        ObtenerIDVenta={ObtenerIDVenta}
+      />
+      <ListaVentas reload={reload} ObtenerIDVenta={ObtenerIDVenta} />
     </>
   );
 }

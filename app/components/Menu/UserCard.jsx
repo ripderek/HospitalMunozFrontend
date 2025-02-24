@@ -6,11 +6,11 @@ import Link from "next/link";
 export default function UserCard({ cerrar, abrir }) {
   const secretKey = "SECRET_KEY";
   const cookies = new Cookies();
-  const param1 = cookies.get("param1");
+  const param1 = cookies.get("param1") || "";
   const param1bytes = CryptoJS.AES.decrypt(param1, secretKey);
-  const param2 = cookies.get("param2");
+  const param2 = cookies.get("param2") || "";
   const param2bytes = CryptoJS.AES.decrypt(param2, secretKey);
-  const param4 = cookies.get("param4");
+  const param4 = cookies.get("param4") || "";
   const param4bytes = CryptoJS.AES.decrypt(param4, secretKey);
   //const tipoRuta = bytes.toString(CryptoJS.enc.Utf8);
   return (

@@ -1,4 +1,3 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import { useState, useEffect } from "react";
 import Msbox from "../../components/Layout/Msbox";

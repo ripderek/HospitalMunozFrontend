@@ -12,6 +12,7 @@ export default function Factura({
   ModificarCantidad,
   Limpiar,
   actualizarLista,
+  ObtenerIDVenta,
 }) {
   const [Total, SetTotales] = useState({
     Total: 0.0,
@@ -53,7 +54,8 @@ export default function Factura({
       );
 
       setLoader(false);
-      alert("ID Venta:" + result.data);
+      //alert("ID Venta:" + result.data);
+      ObtenerIDVenta(result.data);
       //Aqui generar la factura de la venta
       actualizarLista();
       Limpiar();

@@ -6,7 +6,7 @@ import { createContext, useContext } from "react";
 const ApiContext = createContext();
 
 export const ApiProvider = ({ children }) => {
-  const apiUrl = "http://172.30.176.1:4099/"; // Direccion de la API
+  const apiUrl = "http://192.168.1.22:4099/"; // Direccion de la API
   function obtenerFechaFormato() {
     const fecha = new Date();
     const dia = String(fecha.getDate()).padStart(2, "0");

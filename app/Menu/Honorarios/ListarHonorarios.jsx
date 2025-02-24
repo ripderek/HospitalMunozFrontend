@@ -2,24 +2,26 @@ import { useState, useEffect } from "react";
 import Loader from "../../components/Layout/Loader";
 import { TrashIcon, EyeIcon } from "@heroicons/react/24/solid";
 import { useApiContext } from "../../context/ApiContext";
+import ImprimirHonorario from "./ImprimirHonorario";
 import MsboxB from "../../components/Layout/MsboxB";
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import Cookies from "universal-cookie";
-export default function ListaVentas({ reload, ObtenerIDVenta }) {
+
+export default function ListarHonorarios({ reload }) {
   const { apiUrl, obtenerFechaFormato } = useApiContext();
   const secretKey = "SECRET_KEY";
   const cookies = new Cookies();
-  const param1 = cookies.get("param6") || "";
+  const param1 = cookies.get("param8") || "";
   const param1bytes = CryptoJS.AES.decrypt(param1, secretKey);
   const TABLE_HEAD = [
     "N",
-    "Fecha",
     "Hora/Minuto",
-    "Total",
-    "Items",
-    "Identificador",
-    "Ver lista",
+    "Nombre",
+    "Cuenta",
+    "Banco",
+    "Valor",
+    "Ver recibo",
     "Eliminar",
   ];
   const [Lista, setLista] = useState([]);
@@ -32,19 +34,20 @@ export default function ListaVentas({ reload, ObtenerIDVenta }) {
 
   const ObtenerLista = async () => {
     setLoader(true);
+
     try {
       const result = await axios.post(
-        apiUrl + "ventas/Lista_usuario",
+        apiUrl + `honorarios/fu_lista_honorarios_id_usuario_fecha`,
         {
-          identificacion: param1bytes.toString(CryptoJS.enc.Utf8),
+          usuarioid: parseInt(param1bytes.toString(CryptoJS.enc.Utf8)),
           fecha: obtenerFechaFormato(),
         },
         {
           withCredentials: true,
         }
       );
-      //console.log(result.data);
       setLista(result.data);
+
       //console.log(data);
       setLoader(false);
     } catch (error) {
@@ -75,15 +78,14 @@ export default function ListaVentas({ reload, ObtenerIDVenta }) {
       Mensaje: `¿Está seguro que desea eliminar?`,
     });
   };
-
   const Eliminar = async () => {
     SetAlertaC({ ...AlertaC, Open: false });
     setLoader(true);
     try {
       //si no se llena la informacion se sale de esta funcion y no se envia nada al backend
       const result = await axios.post(
-        apiUrl + "ventas/Eliminar",
-        { p_ventaid: eliminarID },
+        apiUrl + "honorarios/Eliminar",
+        { honorarioid: eliminarID },
 
         {
           withCredentials: true,
@@ -93,7 +95,7 @@ export default function ListaVentas({ reload, ObtenerIDVenta }) {
         ...Alerta,
         Open: true,
         Titulo: "Eliminado",
-        Mensaje: `Se ha eliminado la venta`,
+        Mensaje: `Se ha eliminado el honorario`,
         Tipo: "Fail",
       });
       ObtenerLista();
@@ -110,15 +112,51 @@ export default function ListaVentas({ reload, ObtenerIDVenta }) {
       });
     }
   };
-
+  const [informacionHonorario, setinformacionHonorario] = useState({
+    fecha: "",
+    nombre: "",
+    motivo: "",
+    valor: "",
+    numerocuenta: "",
+    banco: "",
+    ver: false,
+    hora: "",
+  });
+  const CambiarValoresHonorarioImpresion = (
+    fecha_p,
+    nombre_p,
+    motivo_p,
+    valor_p,
+    numerocuenta_p,
+    banco_p,
+    ver_p,
+    hora_p
+  ) => {
+    setinformacionHonorario({
+      ...informacionHonorario,
+      fecha: fecha_p,
+      nombre: nombre_p,
+      motivo: motivo_p,
+      valor: valor_p,
+      numerocuenta: numerocuenta_p,
+      banco: banco_p,
+      ver: ver_p,
+      hora: hora_p,
+    });
+  };
   return (
     <div className="p-4 gap-2">
       {load && <Loader />}
-      {/* AQUI DEBER IR PARA PODER VER LA FACTURA
-      {turnoID != 0 && turnoID && (
-        <ImprimirTurno turnoID={turnoID} cerrar={() => setturnoID(0)} />
+
+      {informacionHonorario.ver && (
+        <ImprimirHonorario
+          informacionHonorario={informacionHonorario}
+          cerrar={() =>
+            CambiarValoresHonorarioImpresion("", "", "", "", "", "", false, "")
+          }
+        />
       )}
-     */}
+
       {AlertaC.Open && (
         <MsboxB
           Mensaje={AlertaC.Mensaje}
@@ -149,12 +187,14 @@ export default function ListaVentas({ reload, ObtenerIDVenta }) {
                 {Lista.map(
                   (
                     {
-                      ventaid,
+                      honorarioid,
+                      horaminutos,
                       fecha,
-                      hora_minutos,
-                      identificador,
-                      totalventa,
-                      items,
+                      nombre,
+                      motivo,
+                      valor,
+                      numerocuenta,
+                      banco,
                     },
                     index
                   ) => {
@@ -165,44 +205,60 @@ export default function ListaVentas({ reload, ObtenerIDVenta }) {
 
                     return (
                       <tr
-                        key={parseInt(ventaid)}
+                        key={parseInt(index)}
                         className="text-black dark:text-white hover:dark:bg-slate-300  hover:dark:text-black hover:bg-blue-50"
                       >
                         <td className={classes}>
                           <p className="font-normal">{index + 1}</p>
                         </td>
                         <td className={classes}>
-                          <p className="font-bold">{fecha}</p>
+                          <p className="font-bold text-center">{horaminutos}</p>
                         </td>
 
                         <td className={classes}>
-                          <p className="font-normal">{hora_minutos}</p>
+                          <p className="font-normal">{nombre}</p>
                         </td>
                         <td className={classes}>
-                          <p className="font-normal">${totalventa}</p>
+                          <p className="font-normal">{numerocuenta}</p>
                         </td>
                         <td className={classes}>
-                          <p className="font-bold text-center">{items}</p>
+                          <p className="font-normal">{banco}</p>
                         </td>
                         <td className={classes}>
-                          <p className="font-bold text-center">
-                            {identificador}
+                          <p className="font-bold text-center">${valor}</p>
+                        </td>
+                        {/*
+                        <td className={classes}>
+                          <p className="text-sm text-black bg-yellow-300 rounded-xl p-1 font-bold ">
+                            {estado}
                           </p>
                         </td>
+                       */}
 
-                        <td className={classes}>
+                        <td className={`${classes} items-center text-center`}>
                           <button
-                            className="hover:bg-blue-950 bg-blue-800 h-10 w-auto  text-center rounded-2xl items-center content-center"
-                            onClick={() => ObtenerIDVenta(ventaid)}
+                            className="justify-center hover:bg-blue-950 bg-blue-800 h-10 w-auto  text-center rounded-2xl items-center content-center"
+                            onClick={() =>
+                              CambiarValoresHonorarioImpresion(
+                                fecha,
+                                nombre,
+                                motivo,
+                                valor,
+                                numerocuenta,
+                                banco,
+                                true,
+                                horaminutos
+                              )
+                            }
                           >
                             <EyeIcon className="h-10 w-10 text-white  p-2" />
                           </button>
                         </td>
 
-                        <td className={classes}>
+                        <td className={`${classes} items-center text-center`}>
                           <button
                             className="hover:bg-red-950 bg-red-800 w-auto h-10  text-center rounded-2xl items-center content-center"
-                            onClick={() => ConfirmarEliminar(ventaid)}
+                            onClick={() => ConfirmarEliminar(honorarioid)}
                           >
                             <TrashIcon className="h-10 w-10 text-white  p-2" />
                           </button>

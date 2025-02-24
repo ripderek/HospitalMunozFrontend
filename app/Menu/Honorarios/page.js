@@ -1,9 +1,18 @@
 "use client";
 import anim from "../../../public/Anim/abstract1.json";
 import dynamic from "next/dynamic";
+import ListarHonorarios from "./ListarHonorarios";
+import CrearHonorario from "./CrearHonorario";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+import { useState } from "react";
 
 export default function Honoriarios() {
+  const [reload, setReload] = useState(false);
+
+  // Función para forzar la actualización de ListarTurnos
+  const actualizarLista = () => {
+    setReload((prev) => !prev);
+  };
   return (
     <>
       <div className="flex flex-row p-4 gap-2">
@@ -34,6 +43,8 @@ export default function Honoriarios() {
         </div>
       </div>
       {/* COMPONENTEs */}
+      <CrearHonorario actualizarLista={actualizarLista} />
+      <ListarHonorarios reload={reload} />
     </>
   );
 }
