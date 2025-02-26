@@ -61,7 +61,7 @@ export default function CambiarContra({ cerrar, datosEditar }) {
           )}
           <div className=" h-full w-full flex flex-col p-4">
             <h1 className=" flex-1 text-3xl font-semibold text-blue-800 dark:text-white">
-              Credenciales de sesión {usuarioEdit.userid}
+              Credenciales de sesión
             </h1>
             <div className="p-2">
               <p className="text-lg">Usuario:</p>

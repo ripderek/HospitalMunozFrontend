@@ -157,7 +157,9 @@ export default function ArchivoCierreTurno() {
 
       <div className="p-4 gap-2">
         <div className="text-center items-center justify-center content-center bg-white  w-full rounded-2xl p-10  flex flex-col gap-6 ">
-          <h1 className="text-black"> ArchivoCierreTurno</h1>
+          <h1 className="text-black font-bold text-2xl">
+            Archivo cierre de turno
+          </h1>
 
           <button
             className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
@@ -252,8 +254,6 @@ export default function ArchivoCierreTurno() {
               No hay resultados
             </p>
           )}
-          {/*Resultado */}
-          {resultados.Ingresos}
         </div>
       </div>
     </>
